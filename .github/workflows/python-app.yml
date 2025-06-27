@@ -1,0 +1,33 @@
+name: CI Pipeline
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run unit tests
+      run: |
+        pytest
+
+    - name: Lint with pylint
+      run: |
+        pylint simple_math.py test_simple_math.py
+
+    - name: Build and test with Docker
+      run: |
+        docker build -t ci-cd-app .
+        docker run ci-cd-app
